@@ -1,0 +1,20 @@
+{
+  "path": "f:\\test",
+  "desc": "儿童积分记录Web应用，支持照片上传、奖励管理、积分兑换和完整历史记录功能",
+  "id": "51c02358bd9d44118bed27025f606758",
+  "data": {
+    "spaceKey": "51c02358bd9d44118bed27025f606758",
+    "connections": {
+      "webIDE": "https://51c02358bd9d44118bed27025f606758.codebuddy.cloudstudio.club",
+      "preview": "",
+      "api": "https://51c02358bd9d44118bed27025f606758--api.codebuddy.cloudstudio.club",
+      "pty": "https://51c02358bd9d44118bed27025f606758--pty.codebuddy.cloudstudio.club"
+    }
+  },
+  "config": {
+    "api": "https://51c02358bd9d44118bed27025f606758--api.codebuddy.cloudstudio.club",
+    "pty": "https://51c02358bd9d44118bed27025f606758--pty.codebuddy.cloudstudio.club",
+    "region": "ap-shanghai",
+    "spaceKey": "51c02358bd9d44118bed27025f606758"
+  }
+}
