@@ -5,7 +5,7 @@ const cors = require('cors');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = 8080;
 
 // 中间件
 app.use(cors());
@@ -107,7 +107,7 @@ app.post('/api/points', upload.single('image'), (req, res) => {
 });
 
 // 积分兑换
-app.post('/api/redemptions', (极速赛车开奖直播req, res) => {
+app.post('/api/redemptions', (req, res) => {
   const { gift_name, points_cost } = req.body;
   
   const data = readData();
