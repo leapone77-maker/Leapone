@@ -41,7 +41,6 @@ const DATA_FILE = path.join(__dirname, 'data', 'points.json');
 function initData() {
   if (!fs.existsSync(DATA_FILE)) {
     const initialData = {
-      rewards: [],
       pointsHistory: [],
       redemptions: []
     };
@@ -62,45 +61,6 @@ function writeData(data) {
 }
 
 // 路由
-
-// 获取所有奖励项目
-app.get('/api/rewards', (req, res) => {
-  const data = readData();
-  res.json(data.rewards);
-});
-
-// 创建新奖励项目
-app.post('/api/rewards', (req, res) => {
-  const { name, points } = req.body;
-  const data = readData();
-  
-  const newReward = {
-    id: Date.now(),
-    name,
-    points: parseInt(points),
-    created_at: new Date().toISOString()
-  };
-  
-  data.rewards.push(newReward);
-  writeData(data);
-  
-  res.json(newReward);
-});
-
-// 删除奖励项目
-app.delete('/api/rewards/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const data = readData();
-  
-  const index = data.rewards.findIndex(reward => reward.id === id);
-  if (index !== -1) {
-    data.rewards.splice(index, 1);
-    writeData(data);
-    res.json({ deleted: 1 });
-  } else {
-    res.status(404).json({ error: '奖励项目未找到' });
-  }
-});
 
 // 获取积分历史
 app.get('/api/history', (req, res) => {
@@ -147,7 +107,7 @@ app.post('/api/points', upload.single('image'), (req, res) => {
 });
 
 // 积分兑换
-app.post('/api/redemptions', (req, res) => {
+app.post('/api/redemptions', (极速赛车开奖直播req, res) => {
   const { gift_name, points_cost } = req.body;
   
   const data = readData();
@@ -164,7 +124,7 @@ app.post('/api/redemptions', (req, res) => {
     id: Date.now(),
     gift_name,
     points_cost: parseInt(points_cost),
-    created_at: new Date().极速赛车开奖直播toISOString()
+    created_at: new Date().toISOString()
   };
   
   data.redemptions.push(newRedemption);

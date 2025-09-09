@@ -16,25 +16,12 @@
         </header>
 
         <main>
-            <!-- 奖励项目管理 -->
-            <section class="section">
-                <h2>🎯 奖励项目</h2>
-                <div class="reward-form">
-                    <input type="text" id="rewardName" placeholder="奖励名称">
-                    <input type="number" id="rewardPoints" placeholder="积分值" min="1">
-                    <button onclick="createReward()">添加奖励</button>
-                </div>
-                <div id="rewardsList" class="rewards-grid"></div>
-            </section>
 
-            <!-- 积分记录 -->
+
+            <!-- 获得积分 -->
             <section class="section">
-                <h2>📝 记录积分</h2>
+                <h2>📝 获得积分</h2>
                 <div class="record-form">
-                    <select id="recordType">
-                        <option value="earn">获得积分</option>
-                        <option value="deduct">扣除积分</option>
-                    </select>
                     <input type="text" id="recordDesc" placeholder="事项描述">
                     <input type="number" id="recordPoints" placeholder="积分值" min="1">
                     <input type="file" id="recordImage" accept="image/*">
@@ -58,6 +45,12 @@
                 <div id="historyList" class="history-list"></div>
             </section>
         </main>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <img class="modal-content" id="modalImage">
     </div>
 
     <script src="script.js"></script>
