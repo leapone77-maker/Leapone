@@ -1,0 +1,20 @@
+{
+  "envId": "您的环境ID",
+  "framework": {
+    "name": "express",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-node",
+        "inputs": {
+          "name": "kids-points-system",
+          "path": "/",
+          "platform": "container",
+          "containerConfig": {
+            "image": "node:16",
+            "entry": "npm start"
+          }
+        }
+      }
+    }
+  }
+}

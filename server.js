@@ -19,36 +19,16 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
 
-// 在非Vercel环境中确保目录存在
-if (process.env.VERCEL !== '1') {
-  // 确保上传目录存在
-  if (!fs.existsSync('uploads')) {
-    fs.mkdirSync('uploads');
-  }
-
-  // 确保数据目录存在
-  if (!fs.existsSync('data')) {
-    fs.mkdirSync('data');
-  }
+// 确保目录存在（本地开发环境）
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
+if (!fs.existsSync('data')) {
+  fs.mkdirSync('data');
 }
 
-// 配置multer用于文件上传 - 在Vercel环境中禁用文件存储
-let upload;
-if (process.env.VERCEL === '1') {
-  // Vercel环境：使用内存存储
-  upload = multer({ storage: multer.memoryStorage() });
-} else {
-  // 本地环境：使用磁盘存储
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname);
-    }
-  });
-  upload = multer({ storage });
-}
+// 配置multer使用内存存储（统一使用Supabase Storage）
+const upload = multer({ storage: multer.memoryStorage() });
 
 // 初始化数据库表（如果不存在）
 async function initDatabase() {
@@ -125,27 +105,22 @@ app.post('/api/points', upload.single('image'), async (req, res) => {
     let image_url = null;
     
     if (req.file) {
-      if (process.env.VERCEL === '1') {
-        // Vercel环境：上传到Supabase Storage
-        const fileName = `points/${Date.now()}-${req.file.originalname}`;
-        const { data, error } = await supabase.storage
-          .from('images')
-          .upload(fileName, req.file.buffer, {
-            contentType: req.file.mimetype
-          });
-        
-        if (error) throw error;
-        
-        // 获取公开URL
-        const { data: urlData } = supabase.storage
-          .from('images')
-          .getPublicUrl(fileName);
-        
-        image_url = urlData.publicUrl;
-      } else {
-        // 本地环境：保存到本地文件
-        image_url = `/uploads/${req.file.filename}`;
-      }
+      // 统一使用Supabase Storage上传图片
+      const fileName = `points/${Date.now()}-${req.file.originalname}`;
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype
+        });
+      
+      if (error) throw error;
+      
+      // 获取公开URL
+      const { data: urlData } = supabase.storage
+        .from('images')
+        .getPublicUrl(fileName);
+      
+      image_url = urlData.publicUrl;
     }
 
     const newRecord = {
