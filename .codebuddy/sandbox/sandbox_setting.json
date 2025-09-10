@@ -1,20 +1,20 @@
 {
   "path": "f:\\test",
-  "desc": "儿童积分记录系统 - 已集成Supabase数据库，支持积分管理和兑换功能",
-  "id": "51c02358bd9d44118bed27025f606758",
+  "desc": "这是一个基于Node.js的儿童积分记录系统，使用Express.js框架和Supabase数据库，提供积分管理和文件上传功能",
+  "id": "1a4da2c2374b43c1b85bdd841311081d",
   "data": {
-    "spaceKey": "51c02358bd9d44118bed27025f606758",
+    "spaceKey": "1a4da2c2374b43c1b85bdd841311081d",
     "connections": {
-      "webIDE": "https://51c02358bd9d44118bed27025f606758.codebuddy.cloudstudio.club",
-      "preview": "",
-      "api": "https://51c02358bd9d44118bed27025f606758--api.codebuddy.cloudstudio.club",
-      "pty": "https://51c02358bd9d44118bed27025f606758--pty.codebuddy.cloudstudio.club"
+      "webIDE": "https://1a4da2c2374b43c1b85bdd841311081d.codebuddy.cloudstudio.club",
+      "preview": "https://1a4da2c2374b43c1b85bdd841311081d--{port}.codebuddy.cloudstudio.club",
+      "api": "https://1a4da2c2374b43c1b85bdd841311081d--api.codebuddy.cloudstudio.club",
+      "pty": "https://1a4da2c2374b43c1b85bdd841311081d--pty.codebuddy.cloudstudio.club"
     }
   },
   "config": {
-    "api": "https://51c02358bd9d44118bed27025f606758--api.codebuddy.cloudstudio.club",
-    "pty": "https://51c02358bd9d44118bed27025f606758--pty.codebuddy.cloudstudio.club",
+    "api": "https://1a4da2c2374b43c1b85bdd841311081d--api.codebuddy.cloudstudio.club",
+    "pty": "https://1a4da2c2374b43c1b85bdd841311081d--pty.codebuddy.cloudstudio.club",
     "region": "ap-shanghai",
-    "spaceKey": "51c02358bd9d44118bed27025f606758"
+    "spaceKey": "1a4da2c2374b43c1b85bdd841311081d"
   }
 }

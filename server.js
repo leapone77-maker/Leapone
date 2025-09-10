@@ -6,11 +6,11 @@ const fs = require('fs');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
-// Supabase配置
-const supabaseUrl = 'https://zfbyenwpxslybpfyrrax.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmYnllbndweHNseWJwZnlycmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MDkxOTQsImV4cCI6MjA3Mjk4NTE5NH0.xo3jSGUdX_ER3xaLoO7Ow0LXv62uxvNYotgI-tTOVpc';
+// Supabase配置 - 使用环境变量
+const supabaseUrl = process.env.SUPABASE_URL || 'https://zfbyenwpxslybpfyrrax.supabase.co';
+const supabaseKey = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmYnllbndweHNseWJwZnlycmF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc0MDkxOTQsImV4cCI6MjA3Mjk4NTE5NH0.xo3jSGUdX_ER3xaLoO7Ow0LXv62uxvNYotgI-tTOVpc';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // 中间件

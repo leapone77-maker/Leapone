@@ -1,0 +1,18 @@
+{
+  "envId": "test-5gk0gxf8c5a06729",
+  "region": "ap-shanghai",
+  "framework": {
+    "name": "express",
+    "plugins": {
+      "server": {
+        "use": "@cloudbase/framework-plugin-node",
+        "inputs": {
+          "entry": "server.js",
+          "path": "/",
+          "name": "kids-points-system",
+          "wrapExpress": true
+        }
+      }
+    }
+  }
+}
