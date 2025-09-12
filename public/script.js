@@ -42,7 +42,7 @@ async function loadTotalPoints() {
     try {
         const response = await fetch(`${API_BASE}/total-points`);
         const data = await response.json();
-        document.getElementById('totalPoints').textContent = data.total;
+        document.getElementById('totalPoints').textContent = data.total_points;
     } catch (error) {
         console.error('加载总积分失败:', error);
     }
@@ -56,13 +56,11 @@ async function loadHistory() {
         const historyList = document.getElementById('historyList');
         
         historyList.innerHTML = history.map(item => {
-            const isRedemption = item.hasOwnProperty('gift_name');
-            const pointsChange = isRedemption ? -item.points_cost : item.points_change;
+            const isRedemption = item.type === 'redemption';
+            const pointsChange = isRedemption ? item.points_change : item.points_change;
             const pointsClass = pointsChange > 0 ? 'positive' : 'negative';
             const icon = isRedemption ? '🎁' : '📝';
-            const description = isRedemption ? 
-                `兑换了 ${item.gift_name}` : 
-                item.description;
+            const description = item.description;
             
             return `
                 <div class="history-item">
