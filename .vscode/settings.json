@@ -1,0 +1,4 @@
+{
+    "terminal.integrated.allowChords": true,
+    "terminal.integrated.sendKeybindingsToShell": true
+}
