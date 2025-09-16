@@ -24,10 +24,20 @@
                 <div class="record-form">
                     <input type="text" id="recordDesc" placeholder="事项描述">
                     <input type="number" id="recordPoints" placeholder="积分值" min="1">
-                    <input type="file" id="recordImage" accept="image/*">
+                    <div class="file-input-container">
+                        <input type="file" id="recordImage" accept="image/*">
+                        <label for="recordImage" class="file-input-label">📷 上传图片</label>
+                    </div>
                     <button onclick="addPointsRecord()">记录</button>
                 </div>
             </section>
+
+            <!-- 图片预览模态框 -->
+            <!-- 用于点击历史记录中的图片进行预览 -->
+            <div id="imageModal" class="modal">
+                <span class="close" onclick="closeImageModal()">&times;</span>
+                <img class="modal-content" id="modalImage">
+            </div>
 
             <!-- 积分兑换 -->
             <section class="section">
@@ -47,11 +57,7 @@
         </main>
     </div>
 
-    <!-- 图片预览模态框 -->
-    <div id="imageModal" class="modal">
-        <span class="close">&times;</span>
-        <img class="modal-content" id="modalImage">
-    </div>
+
 
     <script src="script.js"></script>
 </body>

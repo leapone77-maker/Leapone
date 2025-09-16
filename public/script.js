@@ -11,30 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadHistory();
     }, 30000);
     
-    // 图片预览功能
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    const closeBtn = document.querySelector('.close');
-    
-    // 点击图片显示大图
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('history-image')) {
-            modal.style.display = 'block';
-            modalImg.src = e.target.src;
-        }
-    });
-    
-    // 点击关闭按钮
-    closeBtn.onclick = () => {
-        modal.style.display = 'none';
-    };
-    
-    // 点击模态框背景关闭
-    modal.onclick = (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-        }
-    };
+    // 初始化API基础URL
+    window.API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 
+        '' : window.location.pathname.replace(/\/*$/, '');
 });
 
 // 加载总积分
@@ -62,6 +41,14 @@ async function loadHistory() {
             const icon = isRedemption ? '🎁' : '📝';
             const description = item.description;
             
+            // 图片HTML
+            const imageHtml = item.image_url ? 
+                `<div class="history-image">
+                    <span>🖼️</span>
+                    <img src="${API_BASE}${item.image_url}" onclick="openImageModal('${API_BASE}${item.image_url}')" alt="记录图片">
+                </div>` : 
+                '';
+            
             return `
                 <div class="history-item">
                     <div class="history-info">
@@ -70,10 +57,7 @@ async function loadHistory() {
                         <span class="history-points ${pointsClass}">${pointsChange > 0 ? '+' : ''}${pointsChange}</span>
                         <span class="history-time">${formatTime(item.created_at)}</span>
                     </div>
-                    ${item.image_url ? `
-                        <img src="${item.image_url}" alt="记录图片" class="history-image" 
-                             onerror="this.style.display='none'">
-                    ` : ''}
+                    ${imageHtml}
                 </div>
             `;
         }).join('');
@@ -82,34 +66,54 @@ async function loadHistory() {
     }
 }
 
+// 打开图片预览模态框
+function openImageModal(imageUrl) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modal.style.display = "block";
+    modalImg.src = imageUrl;
+}
+
+// 关闭图片预览模态框
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.style.display = "none";
+}
+
 // 添加积分记录
 async function addPointsRecord() {
     const description = document.getElementById('recordDesc').value.trim();
     const points = document.getElementById('recordPoints').value;
-    const imageFile = document.getElementById('recordImage').files[0];
+    const imageInput = document.getElementById('recordImage');
     
     if (!description || !points) {
         alert('请填写事项描述和积分值');
         return;
     }
     
-    const formData = new FormData();
-    formData.append('description', description);
-    formData.append('points_change', points);
-    if (imageFile) {
-        formData.append('image', imageFile);
-    }
-    
     try {
+        // 使用FormData来支持文件上传
+        const formData = new FormData();
+        formData.append('description', description);
+        formData.append('points_change', parseInt(points));
+        
+        // 如果有选择图片，添加到FormData
+        if (imageInput.files && imageInput.files[0]) {
+            formData.append('image', imageInput.files[0]);
+        }
+        
         const response = await fetch(`${API_BASE}/points`, {
             method: 'POST',
             body: formData
         });
         
         if (response.ok) {
+            // 重置表单
             document.getElementById('recordDesc').value = '';
             document.getElementById('recordPoints').value = '';
-            document.getElementById('recordImage').value = '';
+            imageInput.value = '';
+            
+            // 刷新数据
             loadTotalPoints();
             loadHistory();
         } else {
