@@ -1,25 +1,72 @@
-const API_BASE = '/api';
-
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', () => {
-    loadTotalPoints();
-    loadHistory();
+    // 显示加载动画
+    showLoading();
+    
+    // 加载数据
+    Promise.all([loadTotalPoints(), loadHistory()])
+        .finally(() => {
+            // 隐藏加载动画
+            hideLoading();
+        });
     
     // 每30秒刷新一次数据
     setInterval(() => {
-        loadTotalPoints();
-        loadHistory();
+        // 显示加载动画
+        showLoading();
+        
+        Promise.all([loadTotalPoints(), loadHistory()])
+            .finally(() => {
+                // 隐藏加载动画
+                hideLoading();
+            });
     }, 30000);
     
-    // 初始化API基础URL
-    window.API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 
-        '' : window.location.pathname.replace(/\/*$/, '');
+    // 添加图片上传预览功能
+    const imageInput = document.getElementById('recordImage');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+    
+    // 监听文件选择变化
+    imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            showImagePreview(this.files[0]);
+        }
+    });
+    
+    // 监听移除图片按钮点击
+    removeImageBtn.addEventListener('click', clearImagePreview);
 });
+
+// 显示图片预览
+function showImagePreview(file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const previewContainer = document.getElementById('imagePreviewContainer');
+        const previewImage = document.getElementById('imagePreview');
+        
+        previewImage.src = e.target.result;
+        previewContainer.style.display = 'flex';
+    }
+    
+    reader.readAsDataURL(file);
+}
+
+// 清除图片预览
+function clearImagePreview() {
+    const previewContainer = document.getElementById('imagePreviewContainer');
+    const previewImage = document.getElementById('imagePreview');
+    const imageInput = document.getElementById('recordImage');
+    
+    previewImage.src = '';
+    previewContainer.style.display = 'none';
+    imageInput.value = '';
+}
 
 // 加载总积分
 async function loadTotalPoints() {
     try {
-        const response = await fetch(`${API_BASE}/total-points`);
+        const response = await fetch('/api/total-points');
         const data = await response.json();
         document.getElementById('totalPoints').textContent = data.total_points;
     } catch (error) {
@@ -30,7 +77,7 @@ async function loadTotalPoints() {
 // 加载历史记录
 async function loadHistory() {
     try {
-        const response = await fetch(`${API_BASE}/history`);
+        const response = await fetch('/api/history');
         const history = await response.json();
         const historyList = document.getElementById('historyList');
         
@@ -45,7 +92,7 @@ async function loadHistory() {
             const imageHtml = item.image_url ? 
                 `<div class="history-image">
                     <span>🖼️</span>
-                    <img src="${API_BASE}${item.image_url}" onclick="openImageModal('${API_BASE}${item.image_url}')" alt="记录图片">
+                    <img src="${item.image_url}" onclick="openImageModal('${item.image_url}')" alt="记录图片">
                 </div>` : 
                 '';
             
@@ -56,11 +103,15 @@ async function loadHistory() {
                         <span class="history-desc">${description}</span>
                         <span class="history-points ${pointsClass}">${pointsChange > 0 ? '+' : ''}${pointsChange}</span>
                         <span class="history-time">${formatTime(item.created_at)}</span>
+                        <button class="delete-btn" data-id="${item._id}">删除</button>
                     </div>
                     ${imageHtml}
                 </div>
             `;
         }).join('');
+        
+        // 渲染完成后，给删除按钮添加事件监听
+        deleteHistoryRecord();
     } catch (error) {
         console.error('加载历史记录失败:', error);
     }
@@ -80,11 +131,34 @@ function closeImageModal() {
     modal.style.display = "none";
 }
 
+// 显示加载覆盖层
+function showLoading() {
+    document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+// 隐藏加载覆盖层
+function hideLoading() {
+    document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+// 启用/禁用按钮
+function setButtonLoading(button, isLoading) {
+    if (button) {
+        button.disabled = isLoading;
+        if (isLoading) {
+            button.classList.add('loading');
+        } else {
+            button.classList.remove('loading');
+        }
+    }
+}
+
 // 添加积分记录
 async function addPointsRecord() {
     const description = document.getElementById('recordDesc').value.trim();
     const points = document.getElementById('recordPoints').value;
     const imageInput = document.getElementById('recordImage');
+    const button = event.currentTarget || document.querySelector('button[onclick="addPointsRecord()"]');
     
     if (!description || !points) {
         alert('请填写事项描述和积分值');
@@ -92,6 +166,10 @@ async function addPointsRecord() {
     }
     
     try {
+        // 显示加载状态
+        setButtonLoading(button, true);
+        showLoading();
+        
         // 使用FormData来支持文件上传
         const formData = new FormData();
         formData.append('description', description);
@@ -102,7 +180,7 @@ async function addPointsRecord() {
             formData.append('image', imageInput.files[0]);
         }
         
-        const response = await fetch(`${API_BASE}/points`, {
+        const response = await fetch('/api/points', {
             method: 'POST',
             body: formData
         });
@@ -122,6 +200,10 @@ async function addPointsRecord() {
     } catch (error) {
         console.error('添加记录失败:', error);
         alert('添加记录失败');
+    } finally {
+        // 隐藏加载状态
+        setButtonLoading(button, false);
+        hideLoading();
     }
 }
 
@@ -129,6 +211,7 @@ async function addPointsRecord() {
 async function redeemGift() {
     const giftName = document.getElementById('giftName').value.trim();
     const giftCost = document.getElementById('giftCost').value;
+    const button = event.currentTarget || document.querySelector('button[onclick="redeemGift()"]');
     
     if (!giftName || !giftCost) {
         alert('请填写礼物名称和所需积分');
@@ -136,7 +219,11 @@ async function redeemGift() {
     }
     
     try {
-        const response = await fetch(`${API_BASE}/redemptions`, {
+        // 显示加载状态
+        setButtonLoading(button, true);
+        showLoading();
+        
+        const response = await fetch('/api/redemptions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -159,6 +246,10 @@ async function redeemGift() {
     } catch (error) {
         console.error('兑换失败:', error);
         alert('兑换失败');
+    } finally {
+        // 隐藏加载状态
+        setButtonLoading(button, false);
+        hideLoading();
     }
 }
 
@@ -166,4 +257,44 @@ async function redeemGift() {
 function formatTime(timestamp) {
     const date = new Date(timestamp);
     return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+}
+
+// 删除历史记录
+function deleteHistoryRecord() {
+    // 给所有删除按钮添加点击事件
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const recordId = e.target.dataset.id;
+            
+            // 显示确认提示
+            if (confirm('确定要删除这条记录吗？')) {
+                try {
+                    // 显示加载状态
+                    setButtonLoading(e.target, true);
+                    showLoading();
+                    
+                    const response = await fetch(`/api/history/${recordId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // 刷新数据
+                        loadTotalPoints();
+                        loadHistory();
+                    } else {
+                        alert(result.message || '删除失败');
+                    }
+                } catch (error) {
+                    console.error('删除记录失败:', error);
+                    alert('删除记录失败');
+                } finally {
+                    // 隐藏加载状态
+                    setButtonLoading(e.target, false);
+                    hideLoading();
+                }
+            }
+        });
+    });
 }

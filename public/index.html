@@ -28,6 +28,13 @@
                         <input type="file" id="recordImage" accept="image/*">
                         <label for="recordImage" class="file-input-label">📷 上传图片</label>
                     </div>
+                    <!-- 图片预览区域 -->
+                    <div id="imagePreviewContainer" class="upload-preview" style="display: none;">
+                        <div style="position: relative;">
+                            <img id="imagePreview" class="upload-preview-image" src="" alt="预览图片">
+                            <button type="button" id="removeImageBtn" class="remove-image-btn">×</button>
+                        </div>
+                    </div>
                     <button onclick="addPointsRecord()">记录</button>
                 </div>
             </section>
@@ -57,6 +64,10 @@
         </main>
     </div>
 
+    <!-- 全局加载覆盖层 -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
 
 
     <script src="script.js"></script>
