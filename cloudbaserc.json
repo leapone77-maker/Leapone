@@ -7,10 +7,26 @@
       "server": {
         "use": "@cloudbase/framework-plugin-node",
         "inputs": {
-          "entry": "server.js",
+          "entry": "api/index.js",
           "path": "/",
           "name": "kids-points-system",
-          "wrapExpress": true
+          "wrapExpress": true,
+          "ignore": [
+            "node_modules/**",
+            ".git/**",
+            ".codebuddy/**",
+            "uploads/**",
+            "deploy.tar.gz",
+            "deploy-package.tar.gz",
+            "Dockerfile",
+            "*.log",
+            "*.tmp",
+            "*.temp",
+            ".env",
+            ".gitignore",
+            ".vscode/**",
+            "package-lock.json"
+          ]
         }
       }
     }
