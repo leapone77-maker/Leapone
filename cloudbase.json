@@ -1,18 +1,23 @@
 {
   "envId": "test-5gk0gxf8c5a06729",
+  "region": "ap-shanghai",
   "framework": {
     "name": "express",
     "plugins": {
-      "client": {
+      "server": {
         "use": "@cloudbase/framework-plugin-node",
         "inputs": {
+          "entry": "api/index.js",
           "name": "kids-points-system",
-          "path": "/",
-          "platform": "container",
-          "containerConfig": {
-            "image": "node:16",
-            "entry": "npm start"
-          }
+          "wrapExpress": true,
+          "ignore": [
+            "node_modules/**",
+            ".git/**",
+            ".codebuddy/**",
+            "uploads/**",
+            "deploy.tar.gz",
+            "package-lock.json"
+          ]
         }
       }
     }
